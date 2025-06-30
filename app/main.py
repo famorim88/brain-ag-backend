@@ -1,6 +1,6 @@
 # backend/app/main.py
 from fastapi import FastAPI
-from api import producer # Importe seus routers aqui
+from app.api import producer # Importe seus routers aqui
 # from backend.app.database.base import Base # Opcional: pode ser usado para criar tabelas
 # from backend.app.database.session import engine # Opcional: para criar tabelas
 

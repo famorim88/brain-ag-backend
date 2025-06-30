@@ -1,7 +1,7 @@
 # backend/app/crud/producer.py
 from sqlalchemy.orm import Session
-from models.producer import Producer, Culture
-from schemas.producer import ProducerCreate, ProducerUpdate, CultureCreate
+from app.models.producer import Producer, Culture
+from app.schemas.producer import ProducerCreate, ProducerUpdate, CultureCreate
 from typing import List, Optional
 import sqlalchemy # Importar sqlalchemy para func.sum
 

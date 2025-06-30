@@ -1,10 +1,10 @@
 # backend/app/api/producer.py
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from database.session import get_db
-from schemas.producer import Producer, ProducerCreate, ProducerUpdate, CultureCreate, Culture
-from repository import producer as repoProducer
-from core.utils import validate_cpf_cnpj
+from app.database.session import get_db
+from app.schemas.producer import Producer, ProducerCreate, ProducerUpdate, CultureCreate, Culture
+from app.repository import producer as repoProducer
+from app.core.utils import validate_cpf_cnpj
 from typing import List
 
 router = APIRouter(
