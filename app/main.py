@@ -1,20 +1,23 @@
-# backend/app/main.py
 from fastapi import FastAPI
-from app.api import producer # Importe seus routers aqui
-# from backend.app.database.base import Base # Opcional: pode ser usado para criar tabelas
-# from backend.app.database.session import engine # Opcional: para criar tabelas
+from fastapi.middleware.cors import CORSMiddleware
+from app.api import producer
+from app.api import dashboard
+
 
 app = FastAPI(
     title="Brain Agriculture API",
     description="API para gerenciar produtores rurais.",
     version="1.0.0",
 )
-
-# Inclua os routers da API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(producer.router)
-# Se você tiver mais routers (ex: dashboard), inclua-os aqui também:
-# from backend.app.api import dashboard
-# app.include_router(dashboard.router)
+app.include_router(dashboard.router)
 
 @app.get("/")
 async def root():

@@ -48,7 +48,7 @@ def update_producer(db: Session, producer_id: int, producer_update: ProducerUpda
     db_producer = db.query(Producer).filter(Producer.id == producer_id).first()
     if not db_producer:
         return None
-    for field, value in producer_update.dict(exclude_unset=True).items():
+    for field, value in producer_update.model_dump(exclude_unset=True).items():
         setattr(db_producer, field, value)
     db.add(db_producer)
     db.commit()
@@ -80,7 +80,13 @@ def create_culture_for_producer(db: Session, producer_id: int, culture: CultureC
     db.commit()
     db.refresh(db_culture)
     return db_culture
-
+#Add função de filtrar cultura, estava quebrando no router, por conflitar schema com model
+def exists_culture(db: Session, producer_id: int, culture: CultureCreate) -> bool:
+    existing_culture = db.query(Culture).filter(
+        Culture.producer_id == producer_id,
+        Culture.crop_year == culture.crop_year,
+        Culture.name == culture.name).count()
+    return existing_culture > 0
 # --- Funções do Dashboard (não precisam de grandes mudanças nos parâmetros) ---
 def get_total_farms(db: Session) -> int:
     return db.query(Producer).count()

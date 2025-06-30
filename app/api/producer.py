@@ -65,11 +65,7 @@ def add_culture_to_producer(producer_id: int, culture: CultureCreate, db: Sessio
     if not db_producer:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Produtor não encontrado")
 
-    existing_culture = db.query(Culture).filter(
-        Culture.producer_id == producer_id,
-        Culture.crop_year == culture.crop_year,
-        Culture.name == culture.name
-    ).first()
+    existing_culture = repoProducer.exists_culture(db,producer_id=producer_id,culture=culture)
     if existing_culture:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Esta cultura e safra já existem para este produtor.")
 
