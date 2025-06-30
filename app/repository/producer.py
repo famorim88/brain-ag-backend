@@ -2,7 +2,7 @@
 from sqlalchemy.orm import Session
 from app.models.producer import Producer, Culture
 from app.schemas.producer import ProducerCreate, ProducerUpdate, CultureCreate
-from typing import List, Optional
+from typing import List, Optional,Dict
 import sqlalchemy # Importar sqlalchemy para func.sum
 
 # --- Funções para Produtor ---
@@ -64,6 +64,7 @@ def delete_producer(db: Session, producer_id: int) -> Optional[Producer]:
 
 
 # --- Funções para Cultura ---
+#TA COM ERRO, VERIFICAR DEPOIS, N TA INSERINDO CULTURA PARA PRODUTOR
 def create_culture_for_producer(db: Session, producer_id: int, culture: CultureCreate) -> Optional[Culture]:
     db_producer = db.query(Producer).filter(Producer.id == producer_id).first()
     if not db_producer:
@@ -87,3 +88,38 @@ def get_total_farms(db: Session) -> int:
 def get_total_hectares(db: Session) -> float:
     total_area = db.query(sqlalchemy.func.sum(Producer.total_area)).scalar()
     return total_area if total_area is not None else 0.0
+
+def get_farms_by_state_summary(db: Session) -> Dict[str, int]:
+    """
+    Retorna a contagem de fazendas por estado.
+    """
+    # Consulta: SELECT state, COUNT(id) FROM producers GROUP BY state;
+    results = db.query(
+        Producer.state,
+        sqlalchemy.func.count(Producer.id)
+    ).group_by(Producer.state).all()
+    # Converte a lista de tuplas (estado, contagem) para um dicionário
+    return {state: count for state, count in results}
+
+def get_cultures_summary(db: Session) -> Dict[str, int]:
+    """
+    Retorna a contagem de culturas plantadas por nome da cultura.
+    """
+    # Consulta: SELECT name, COUNT(id) FROM cultures GROUP BY name;
+    results = db.query(
+        Culture.name,
+        sqlalchemy.func.count(Culture.id)
+    ).group_by(Culture.name).all()
+    return {name: count for name, count in results}
+
+def get_area_by_soil_use_summary(db: Session) -> Dict[str, float]:
+    """
+    Retorna a soma total das áreas agricultável e de vegetação.
+    """
+    total_agricultural_area = db.query(sqlalchemy.func.sum(Producer.agricultural_area)).scalar() or 0.0
+    total_vegetation_area = db.query(sqlalchemy.func.sum(Producer.vegetation_area)).scalar() or 0.0
+
+    return {
+        "agricultural": total_agricultural_area,
+        "vegetation": total_vegetation_area
+    }

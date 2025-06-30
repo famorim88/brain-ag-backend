@@ -1,6 +1,6 @@
 # backend/app/schemas/producer.py
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional, List,Dict
 
 # --- Schemas de Cultura ---
 class CultureBase(BaseModel):
@@ -54,4 +54,6 @@ class Producer(ProducerBase):
 class DashboardSummary(BaseModel):
     total_farms: int
     total_hectares: float
-    # ... outros campos do dashboard
+    farms_by_state: Dict[str, int]
+    cultures_summary: Dict[str, int]
+    area_by_soil_use: Dict[str, float]
