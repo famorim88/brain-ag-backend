@@ -73,3 +73,17 @@ def add_culture_to_producer(producer_id: int, culture: CultureCreate, db: Sessio
     if not db_culture:
          raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Falha ao adicionar cultura.")
     return db_culture
+
+@router.delete("/{producer_id}/cultures/{culture_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_culture_from_producer(producer_id: int, culture_id: int, db: Session = Depends(get_db)):
+    db_producer = repoProducer.get_producer(db, producer_id=producer_id)
+    if db_producer is None:
+        raise HTTPException(status_code=404, detail="Produtor não encontrado")
+
+    try:
+        success = repoProducer.delete_culture_from_producer(db, producer_id=producer_id, culture_id=culture_id)
+        if not success:
+            raise HTTPException(status_code=404, detail="Cultura não encontrada para este produtor.")
+        return {"message": "Cultura deletada com sucesso."}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))

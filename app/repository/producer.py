@@ -80,6 +80,14 @@ def create_culture_for_producer(db: Session, producer_id: int, culture: CultureC
     db.commit()
     db.refresh(db_culture)
     return db_culture
+
+def delete_culture_from_producer(db:Session,producer_id:int,culture_id:int) -> Optional[Culture]:
+    db_culture = db.query(Culture).filter(Culture.id == culture_id,Culture.producer_id == producer_id).first()
+    if db_culture:
+        db.delete(db_culture)
+        db.commit()
+    return db_culture
+
 #Add função de filtrar cultura, estava quebrando no router, por conflitar schema com model
 def exists_culture(db: Session, producer_id: int, culture: CultureCreate) -> bool:
     existing_culture = db.query(Culture).filter(
